@@ -84,7 +84,9 @@ sub pingone ($) {
 
     my $sock = 0;
 
-    if ($ipversion == 6) {
+    my $use_ipv6 = ( $ipversion == 6 ) || ( $ipversion == 0 && $host =~ /:/ );
+
+    if ($use_ipv6) {
     	require IO::Socket::INET6;
         $sock = IO::Socket::INET6->new(
             "PeerAddr" => $host,
@@ -233,12 +235,12 @@ DOC
 		},
 		ipversion => {
 			_doc => <<DOC,
-The IP protocol used. Possible values are "4" and "6".
-Passed to echoping(1) as the "-4" or "-6" options.
+The IP protocol version to use. Possible values are "4", "6", or "0" (auto-detect
+based on the host address — IPv6 is assumed when the host contains a colon).
 DOC
-			_example => 4,
-            _default => 4,
-			_re => '[46]',
+			_example => 6,
+			_default => 0,
+			_re => '[046]',
 		},
 	});
 }
